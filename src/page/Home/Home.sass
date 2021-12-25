@@ -1,0 +1,52 @@
+.home
+  position: absolute
+  top: 0
+  left: 0
+  width: 100vw
+  height: 100vh
+  background-color: #cccccc3a
+  display: flex
+  overflow: hidden
+
+  .home-header,
+  .home-sider
+    color: #fff
+
+  .home-header h1
+    color: inherit
+
+  .layout-content
+    overflow: auto
+    box-sizing: border-box
+    padding: 1rem
+
+  .layout-content-wrapper
+    min-width: 688px
+
+
+  .home-header
+    .header-container
+      position: relative
+
+      .header-account
+        position: absolute
+        right: 15px
+        top: 50%
+        height: 40px
+        line-height: 40px
+        padding: 0 30px
+        transform: translateY(-50%)
+        color: #fff
+        background-color: #1890FF
+        font-weight: bolder
+        cursor: pointer
+
+        .header-account-btn
+          position: absolute
+          top: 100%
+          left: 0
+          display: none
+          transition: all .3s
+
+        &:hover .header-account-btn
+          display: block

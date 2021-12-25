@@ -1,26 +1,24 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './App.sass';
+import store from './redux';
+import { Provider } from 'react-redux';
+import Home from './page/Home';
+import { ConnectedRouter } from 'connected-react-router';
+import history from './redux/history';
+import ProtectedRoute from './components/ProtectedRoute';
+import { Route } from 'react-router-dom';
+import Layout from './layout';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	return (
+		<Provider store={store}>
+			<ConnectedRouter history={history}>
+				<div className="App">
+					<Layout></Layout>
+				</div>
+			</ConnectedRouter>
+		</Provider>
+	);
 }
 
 export default App;
