@@ -32,8 +32,8 @@ export function setLoadingAction(isLoading: boolean): SetLoaingAction {
   }
 }
 
-export type EditBlogAction = IAction<"edit_blog", {id: string, blog: Omit<IBlog, "id">}>;
-export function editBlog(id: string, blog: Omit<IBlog, "id">): EditBlogAction {
+export type EditBlogAction = IAction<"edit_blog", { id: string, blog: Partial<Omit<IBlog, "id">> }>;
+export function editBlog(id: string, blog: Partial<Omit<IBlog, "id">>): EditBlogAction {
   return {
     type: "edit_blog",
     payload: {

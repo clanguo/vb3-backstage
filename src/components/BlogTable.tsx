@@ -29,7 +29,7 @@ interface IBlogTable {
 	loading: boolean;
 	onChange(page: number): void;
 	onDelete(id: string): void;
-	condition: ISearchCondition,
+	condition: ISearchCondition;
 	onEdit?(id: string): void;
 }
 
@@ -72,32 +72,37 @@ const BlogTable: React.FC<IBlogTable> = props => {
 			render: (tags: ITag[], record: any, index: number) => {
 				return (
 					<>
-						{tags.map(tag => {
-							let color;
-							if (colorsMap[tag.id!]) {
-								color = colorsMap[tag.id!];
-							} else {
-								colorsMap[tag.id!] = color = getRandomColor();
-							}
-							return (
-								<Tag key={tag.id} color={color}>
-									<NavLink to={`/tag/${tag.id}`}>
-										{tag.name}
-									</NavLink>
-								</Tag>
-							);
-						})}
+						{tags.length
+							? tags.map(tag => {
+									let color;
+									if (colorsMap[tag.id!]) {
+										color = colorsMap[tag.id!];
+									} else {
+										colorsMap[tag.id!] = color =
+											getRandomColor();
+									}
+									return (
+										<Tag key={tag.id} color={color}>
+											{tag.name}
+										</Tag>
+									);
+							  })
+							: null}
 					</>
 				);
 			},
 		},
 		{
-			title: "分类",
-			dataIndex: "category",
-			key: "category",
+			title: '分类',
+			dataIndex: 'category',
+			key: 'category',
 			render: (category: ICategory) => {
-				return <Tag color="#2db7f5">{category?.name}</Tag>
-			}
+				return (
+					<Tag color="#2db7f5" key={category.id}>
+						{category?.name}
+					</Tag>
+				);
+			},
 		},
 		{
 			title: '创建时间',
@@ -175,9 +180,9 @@ const BlogTable: React.FC<IBlogTable> = props => {
 		// props.onEdit && props.onEdit(form);
 	};
 
-	const changePager = (pagination:PaginationProps) => {
+	const changePager = (pagination: PaginationProps) => {
 		props.onChange(pagination.current!);
-	}
+	};
 
 	return (
 		<>

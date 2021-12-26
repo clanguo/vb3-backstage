@@ -2,7 +2,7 @@ import { message } from "antd";
 import { ThunkAction } from "redux-thunk";
 import TagServices, { ITag } from "../../services/TagServices";
 import { IState } from "../reducers";
-import { DeleteBlogAction } from "./BlogActions";
+import { DeleteBlogAction, TBlogActions } from "./BlogActions";
 import { IAction } from "./CommonAction";
 
 export type SaveTagAction = IAction<"save_tags", ITag[]>;
@@ -14,9 +14,9 @@ export function saveTagAction(tags: ITag[]): SaveTagAction {
 }
 
 export type DeleteTagAction = IAction<"delete_tag", string>;
-export function deleteTagAction(id: string): DeleteBlogAction {
+export function deleteTagAction(id: string): DeleteTagAction {
   return {
-    type: "delete_blog",
+    type: "delete_tag",
     payload: id
   }
 }
@@ -29,7 +29,7 @@ export function addTagAction(tag: ITag): AddTagAction {
   }
 }
 
-export type TTagActions = SaveTagAction | DeleteBlogAction | AddTagAction;
+export type TTagActions = SaveTagAction | DeleteTagAction | AddTagAction;
 
 export function fetchTag(): ThunkAction<Promise<void>, IState, any, TTagActions> {
   return async (dispatch, getState) => {
@@ -40,7 +40,7 @@ export function fetchTag(): ThunkAction<Promise<void>, IState, any, TTagActions>
   }
 }
 
-export function fetchDeleteTag(id: string): ThunkAction<Promise<void>, ITag[], any, TTagActions> {
+export function fetchDeleteTag(id: string): ThunkAction<Promise<void>, IState, any, TTagActions> {
   return async (dispatch, getState) => {
     const res = await TagServices.deleteTag(id);
     if (res.err) {
@@ -51,6 +51,12 @@ export function fetchDeleteTag(id: string): ThunkAction<Promise<void>, ITag[], a
     }
   }
 }
+
+// export function unLinkTagWithBlog(tagId: string, blogId: string): ThunkAction<void, IState, any, TTagActions | TBlogActions> {
+//   return (dispatch, getState) => {
+    
+//   }
+// }
 
 export default {
   fetchTag,

@@ -1,11 +1,15 @@
 import { Avatar, Button, List, message, Modal, Popconfirm, Table } from 'antd';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { IState } from '../redux/reducers';
 import { IBlog } from '../services/BlogServices';
 import TagServices, { ITag } from '../services/TagServices';
 
 interface ITagTable {
 	data: ITag[];
 	onDelete(id: string): void;
+	onViewBlog?(id: string): void;
+	onUnlink(tagId: string, blogId: string): void;
 }
 
 const TagTable: React.FC<ITagTable> = props => {
@@ -66,10 +70,21 @@ const TagTable: React.FC<ITagTable> = props => {
 		return (
 			<List.Item
 				actions={[
-					<Button size="small" type="primary">
+					<Button
+						size="small"
+						type="primary"
+						onClick={() => {
+							props.onViewBlog && props.onViewBlog(item.id);
+						}}
+					>
 						查看
 					</Button>,
-					<Button size="small" type="primary" danger>
+					<Button
+						size="small"
+						type="primary"
+						danger
+						onClick={() => props.onUnlink(viewTagId!, item.id)}
+					>
 						解除关联
 					</Button>,
 				]}
@@ -83,30 +98,45 @@ const TagTable: React.FC<ITagTable> = props => {
 		);
 	};
 
-	const [tagBlogs, setTagBlogs] = useState<ITag | null>(null);
+	// const [tagBlogs, setTagBlogs] = useState<ITag | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [showModal, setShowModal] = useState<boolean>(false);
+	const tagBlogs = useSelector<IState, ITag[]>(state => state.tags);
+	const [viewTagId, setViewTagId] = useState<string | null>(null);
 
 	const onViewTag = async (id: string) => {
-		setLoading(true);
 		setShowModal(true);
-		try {
-			const res = await TagServices.getTag(id);
-			if (res.err) {
-				message.error(res.err);
-			} else {
-				setTagBlogs(res.data!);
-			}
-		} catch (error) {
-			console.log(error);
-		} finally {
-			setLoading(false);
-		}
+		setViewTagId(id);
 	};
 
 	const onCancelModal = () => {
 		setShowModal(false);
-	}
+		// setTagBlogs(null);
+	};
+
+	const modalContent = () => {
+		if (!viewTagId) {
+			return null;
+		}
+
+		const tag = tagBlogs.find(tag => tag.id === viewTagId);
+
+		return (
+			<Modal
+				visible={showModal}
+				title={tag?.name}
+				onCancel={onCancelModal}
+				footer={null}
+			>
+				<List
+					itemLayout="horizontal"
+					renderItem={renderListItem}
+					dataSource={tag?.blogs}
+					loading={loading}
+				></List>
+			</Modal>
+		);
+	};
 
 	return (
 		<div>
@@ -115,14 +145,7 @@ const TagTable: React.FC<ITagTable> = props => {
 				dataSource={props.data}
 				rowKey={'id'}
 			></Table>
-			<Modal visible={showModal} title={tagBlogs?.name} onCancel={onCancelModal} footer={null}>
-				<List
-					itemLayout="horizontal"
-					renderItem={renderListItem}
-					dataSource={tagBlogs?.blogs}
-					loading={loading}
-				></List>
-			</Modal>
+			{modalContent()}
 		</div>
 	);
 };

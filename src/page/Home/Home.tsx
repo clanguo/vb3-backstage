@@ -17,7 +17,7 @@ import {
 	DesktopOutlined,
 	ContainerOutlined,
 	MailOutlined,
-	BarsOutlined
+	BarsOutlined,
 } from '@ant-design/icons';
 import DashBoard from './Dashboard';
 import { ProjectServices } from '../../services/ProjectServices';
@@ -32,6 +32,7 @@ import { IAdminState } from '../../redux/reducers/AdminReducers';
 import AdminActions from '../../redux/actions/AdminActions';
 import CategoryActions from '../../redux/actions/CategoryActions';
 import { RouterState } from 'connected-react-router';
+import Category from '../Category';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -102,19 +103,10 @@ export default function Home() {
 									<NavLink to="/blog/add">添加博客</NavLink>
 								</Menu.Item>
 							</SubMenu>
-							<SubMenu
-								key="tag"
-								icon={<AppstoreOutlined />}
-								title="标签管理"
-							>
-								<Menu.Item key="/tag">
-									<NavLink to="/tag">标签列表</NavLink>
-								</Menu.Item>
-							</SubMenu>
-							<Menu.Item
-								key="/category"
-								icon={<BarsOutlined />}
-							>
+							<Menu.Item key="/tag" icon={<AppstoreOutlined />}>
+								<NavLink to="/tag">标签列表</NavLink>
+							</Menu.Item>
+							<Menu.Item key="/category" icon={<BarsOutlined />}>
 								<NavLink to="/category">分类管理</NavLink>
 							</Menu.Item>
 						</Menu>
@@ -133,7 +125,7 @@ export default function Home() {
 								></Route>
 								<Route path="/blog" component={Blog}></Route>
 								<Route path="/tag/:id?" component={Tag}></Route>
-								<Route path="/category/:id?"></Route>
+								<Route path="/category" component={Category}></Route>
 							</Switch>
 						</div>
 					</Content>

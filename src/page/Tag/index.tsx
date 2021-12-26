@@ -1,14 +1,18 @@
 import { Button, Form, message, Modal } from 'antd';
+import { push } from 'connected-react-router';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import TagForm from '../../components/TagForm';
 import TagTable from '../../components/TagTable';
+import BlogActions, { editBlog } from '../../redux/actions/BlogActions';
 import TagActions from '../../redux/actions/TagActions';
 import { IState } from '../../redux/reducers';
 import TagServices, { ITag } from '../../services/TagServices';
 
 const Tag: React.FC = () => {
 	const dispatch = useDispatch();
+
+	const store = useStore<IState>();
 
 	useEffect(() => {
 		dispatch(TagActions.fetchTag());
@@ -38,7 +42,7 @@ const Tag: React.FC = () => {
 			if (res.err) {
 				message.error(res.err);
 			} else {
-				message.success("添加成功");
+				message.success('添加成功');
 				dispatch(TagActions.addTagAction(res.data!));
 				form.resetFields();
 				setShowAddModal(false);
@@ -46,9 +50,25 @@ const Tag: React.FC = () => {
 		} catch (e) {
 			// 验证失败
 		}
-	}
+	};
 
 	const [form] = Form.useForm();
+
+	const onViewBlog = (id: string) => {
+		dispatch(push(`/blog/${id}`));
+	};
+
+	const onUnlink = async (tagId: string, blogId: string) => {
+		const { err } = await TagServices.unlinkTagWithBlog(tagId, blogId);
+		if (!err) {
+			message.success("操作成功");
+			dispatch(TagActions.fetchTag());
+			const blog = store.getState().blog.blogs.find(blog => blog.id === blogId);
+			dispatch(BlogActions.editBlog(blogId, { tags: blog?.tags.filter(tag => tag.id !== tagId) }));
+		} else {
+			message.error(err);
+		}
+	};
 
 	return (
 		<div>
@@ -57,7 +77,12 @@ const Tag: React.FC = () => {
 					新增
 				</Button>
 			</p>
-			<TagTable data={tags} onDelete={onDelete}></TagTable>
+			<TagTable
+				data={tags}
+				onDelete={onDelete}
+				onViewBlog={onViewBlog}
+				onUnlink={onUnlink}
+			></TagTable>
 			<Modal
 				visible={showAddModal}
 				onCancel={onCancelModal}

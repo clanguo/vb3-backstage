@@ -21,7 +21,7 @@ export default class CategoryServices {
     return await request.get(`/api/category/${id}`);
   }
 
-  public static async addCategory(name: string): Promise<ResponseResult<boolean>> {
+  public static async addCategory(name: string): Promise<ResponseResult<Required<ICategory>>> {
     return await request.post("/api/category", { name });
   }
 

@@ -119,7 +119,7 @@ const BlogEdit: React.FC<RouteComponentProps<{ id: string }>> = ({ match }) => {
 		<div className="blog-form">
 			<p>
 				<Button onClick={exitEdit} type="primary">
-					返回列表
+					返回
 				</Button>
 			</p>
 			{editBlog ? (

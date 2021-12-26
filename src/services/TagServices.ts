@@ -7,7 +7,7 @@ export interface ITag {
   
   name: string;
 
-  blogs?: IBlog[]
+  blogs: IBlog[]
 }
 
 export default class TagServices {
@@ -32,5 +32,9 @@ export default class TagServices {
 
   public static async getTags(): Promise<ResponseResult<ITag[]>> {
     return request.get(`/api/tag`);
+  }
+
+  public static async unlinkTagWithBlog(tagId: string, blogId: string): Promise<ResponseResult<boolean>> {
+    return request.put(`/api/tag/${tagId}`, { id: blogId });
   }
 }
