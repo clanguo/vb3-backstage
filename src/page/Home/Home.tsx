@@ -33,6 +33,7 @@ import AdminActions from '../../redux/actions/AdminActions';
 import CategoryActions from '../../redux/actions/CategoryActions';
 import { RouterState } from 'connected-react-router';
 import Category from '../Category';
+import Website from '../Website';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -109,6 +110,9 @@ export default function Home() {
 							<Menu.Item key="/category" icon={<BarsOutlined />}>
 								<NavLink to="/category">分类管理</NavLink>
 							</Menu.Item>
+							<Menu.Item key="/website" icon={<PieChartOutlined />}>
+								<NavLink to="/website">网站管理</NavLink>
+							</Menu.Item>
 						</Menu>
 					</Sider>
 					<Content className="layout-content">
@@ -126,6 +130,7 @@ export default function Home() {
 								<Route path="/blog" component={Blog}></Route>
 								<Route path="/tag/:id?" component={Tag}></Route>
 								<Route path="/category" component={Category}></Route>
+								<Route path="/website" component={Website}></Route>
 							</Switch>
 						</div>
 					</Content>

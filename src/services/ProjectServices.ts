@@ -21,8 +21,26 @@ export interface IEventLog {
   type: EventType;
 }
 
+export interface ISetting {
+  [prop: string]: any;
+
+  projectAddress: string;
+
+  imgProtect: boolean;
+
+  allowOrigin: string[] | boolean;
+}
+
 export class ProjectServices {
   public static async getEventLog(): Promise<ResponseResult<IEventLog[]>> {
     return request.get("/api/project/event");
+  }
+
+  public static async getSetting(): Promise<ResponseResult<ISetting>> {
+    return request.get("/api/project/setting");
+  }
+
+  public static async setSetting(setting: ISetting): Promise<ResponseResult<ISetting>> {
+    return request.post("/api/project/setting", setting);
   }
 }
