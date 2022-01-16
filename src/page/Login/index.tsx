@@ -11,6 +11,8 @@ import { IAdminState } from '../../redux/reducers/AdminReducers';
 function mapDispatchToProps(dispatch: Dispatch<any>) {
 	return {
 		onSubmit(form: any) {
+			// 把boolean类型的remeber参数变成0|1
+			form.remember = +form.remember;
 			dispatch(AdminActions.loginAdmin(form));
 		},
 
@@ -53,13 +55,9 @@ const Login: React.FC<ILogin> = props => {
 						message: '用户名不能为空',
 					},
 					{
-						max: 10,
-						message: '用户名不能超过10位',
-					},
-					{
-						min: 3,
-						message: '用户名不能小于3位',
-					},
+						pattern: /[a-zA-Z0-9@]{3,10}/,
+						message: "账号只能是数字、字母或者@"
+					}
 				]}
 			>
 				<Input
@@ -75,13 +73,9 @@ const Login: React.FC<ILogin> = props => {
 						message: '密码不能为空',
 					},
 					{
-						max: 16,
-						message: '用户名不能超过16位',
-					},
-					{
-						min: 4,
-						message: '用户名不能小于4位',
-					},
+						pattern: /[a-zA-Z0-9@]{4,16}/,
+						message: "密码只能是4-16位的数字、字母或者@"
+					}
 				]}
 			>
 				<Input
@@ -101,6 +95,7 @@ const Login: React.FC<ILogin> = props => {
 					type="primary"
 					htmlType="submit"
 					className="login-form-button"
+					loading={props.isLoading}
 				>
 					登录
 				</Button>

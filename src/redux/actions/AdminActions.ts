@@ -10,7 +10,7 @@ export interface IAdmin {
   account: string | null;
 
   // password: string;
-  token: string | null;
+  // token: string | null;
 }
 
 export interface ILoginAdmin {
@@ -46,16 +46,23 @@ export type TAdminActions = LoginAdminAction | LogoutAdminAction | SetLoadingAdm
 export function loginAdmin(admin: ILoginAdmin): ThunkAction<Promise<void>, IAdminState, any, TAdminActions> {
   return async (dispatch, getState) => {
     dispatch(setLoadingAction(true));
-    const { data, headers } = await AdminServices.login(admin);
-    if (data.err) {
-      message.error(data.err);
-    } else {
-      let token = headers.authorization;
-      let account = data.data!.account;
-      dispatch(loginAdminAction({ token, account }));
-      message.success("登录成功");
+    try {
+      const { data, headers } = await AdminServices.login(admin);
+      if (data.err) {
+        message.error(data.err);
+      } else {
+        // let token = headers.authorization;
+        let account = data.data!.account;
+        dispatch(loginAdminAction({ account }));
+        message.success("登录成功");
+      }
+    } catch (e) { 
+      message.error("登录失败");
+      console.warn(e);
+     }
+    finally {
+      dispatch(setLoadingAction(false));
     }
-    dispatch(setLoadingAction(false));
   }
 }
 

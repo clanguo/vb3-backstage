@@ -1,81 +1,167 @@
-import { Modal, Spin } from 'antd';
-import React, { Dispatch, useCallback, useEffect } from 'react';
-import { connect } from 'react-redux';
-import AdminActions, {
-	loginAdminAction,
-	logoutAdminAction,
-	setLoadingAction,
-	TAdminActions,
-} from '../../redux/actions/AdminActions';
-import './index.sass';
-import { IState } from '../../redux/reducers';
-import AdminServices from '../../services/AdminServices';
-import Login from '../Login';
-import { delay } from '../../util';
-// import _Layout from '../Layout';
+import { Button, Dropdown, Layout, Menu } from 'antd';
+import SubMenu from 'antd/lib/menu/SubMenu';
+import React, { useEffect } from 'react';
 import {
-	// Navigate,
+	NavLink,
 	Route,
-	// Routes,
-	// useHref,
+	Switch,
+	// Routes, useHref,
 	useLocation,
 } from 'react-router-dom';
+import './index.sass';
+import {
+	AppstoreOutlined,
+	MenuUnfoldOutlined,
+	MenuFoldOutlined,
+	PieChartOutlined,
+	DesktopOutlined,
+	ContainerOutlined,
+	MailOutlined,
+	BarsOutlined,
+	SettingOutlined,
+} from '@ant-design/icons';
+import DashBoard from './Dashboard';
+import { ProjectServices } from '../../services/ProjectServices';
+import { useDispatch, useSelector } from 'react-redux';
+import ProjectActions from '../../redux/actions/ProjectActions';
+import Blog from '../Blog';
+import BlogAdd from '../Blog/BlogAdd';
+import * as pathToRegexp from 'path-to-regexp';
+import Tag from '../Tag';
+import { IState } from '../../redux/reducers';
+import { IAdminState } from '../../redux/reducers/AdminReducers';
+import AdminActions from '../../redux/actions/AdminActions';
+import CategoryActions from '../../redux/actions/CategoryActions';
+import { RouterState } from 'connected-react-router';
+import Category from '../Category';
+import Website from '../Website';
 
-interface IHome {
-	whoIm(): Promise<string | null>;
+const { Header, Footer, Sider, Content } = Layout;
 
-	isLoading: boolean;
-
-	account: string | null;
-}
-
-function mapStateToProps(state: IState) {
-	return {
-		account: state.admin.account,
-		isLoading: state.admin.isLoading,
-	};
-}
-
-function mapDispatchToProps(dispatch: Dispatch<TAdminActions>) {
-	return {
-		async whoIm() {
-			dispatch(AdminActions.setLoadingAction(true));
-
-			const { data, headers } = await AdminServices.whoim();
-			let account = null;
-			if (!data.err) {
-				if (data.data?.account) {
-					let token = headers.authorization;
-					account = data.data.account;
-					dispatch(loginAdminAction({ token, account }));
-				} else {
-					dispatch(logoutAdminAction());
-				}
-			}
-
-			dispatch(setLoadingAction(false));
-			return account;
-		},
-	};
-}
-
-const Home: React.FC<IHome> = props => {
+export default function Home() {
 	const location = useLocation();
+
+	const dispatch = useDispatch();
+
+	const admin = useSelector<IState, IAdminState>(state => state.admin);
+
+	// const router = useSelector<IState, RouterState>(state => state.router);
+
 	useEffect(() => {
-		props.whoIm();
+		dispatch(CategoryActions.fetchCategory());
 	}, []);
 
-	return (
-		<Spin
-			spinning={props.isLoading}
-			tip="加载中..."
-			size="large"
-			wrapperClassName="home-spin"
-		>
-			<div className="home">
-			</div>
-		</Spin>
-	);
-};
+	useEffect(() => {
+		if (location.pathname === '/') {
+			dispatch(ProjectActions.fetchTimeLine());
+		}
+	}, [location.pathname]);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+	const onAccountMenuClick = (event: any) => {
+		if (event.key === 'logout') {
+			dispatch(AdminActions.logoutAdmin());
+		}
+	};
+
+	const accoutDropDownMenu = (
+		<Menu>
+			<Menu.Item key="logout" onClick={onAccountMenuClick}>
+				<span>退出登录</span>
+			</Menu.Item>
+		</Menu>
+	);
+
+	return (
+		<div className="home">
+			<Layout>
+				<Header className="home-header">
+					<div className="header-container">
+						<NavLink to="/">
+							<h1
+								style={{
+									display: 'inline-block',
+									lineHeight: '64px',
+								}}
+							>
+								博客后台管理系统
+							</h1>
+						</NavLink>
+						<Dropdown
+							overlay={accoutDropDownMenu}
+							placement="bottomRight"
+							className="header-account"
+						>
+							<Button type="primary">{admin.account}</Button>
+						</Dropdown>
+					</div>
+				</Header>
+				<Layout>
+					<Sider
+						collapsible
+						className="home-sider"
+					>
+						<Menu
+							defaultSelectedKeys={[location.pathname]}
+							defaultOpenKeys={['blog', 'tag']}
+							mode="inline"
+							theme="dark"
+						>
+							<Menu.Item key="/" icon={<PieChartOutlined />}>
+								<NavLink to="/">数据面板</NavLink>
+							</Menu.Item>
+							<SubMenu
+								key="blog"
+								icon={<MailOutlined />}
+								title="博客管理"
+							>
+								<Menu.Item key="/blog">
+									<NavLink to="/blog">博客列表</NavLink>
+								</Menu.Item>
+								<Menu.Item key="/blog/add">
+									<NavLink to="/blog/add">添加博客</NavLink>
+								</Menu.Item>
+							</SubMenu>
+							<Menu.Item key="/tag" icon={<AppstoreOutlined />}>
+								<NavLink to="/tag">标签列表</NavLink>
+							</Menu.Item>
+							<Menu.Item key="/category" icon={<BarsOutlined />}>
+								<NavLink to="/category">分类管理</NavLink>
+							</Menu.Item>
+							<Menu.Item
+								key="/website"
+								icon={<SettingOutlined />}
+							>
+								<NavLink to="/website">网站管理</NavLink>
+							</Menu.Item>
+						</Menu>
+					</Sider>
+					<Content className="layout-content">
+						<div className="layout-content-wrapper">
+							<Switch>
+								<Route
+									path="/"
+									exact
+									component={DashBoard}
+								></Route>
+								<Route
+									path="/blog/add"
+									component={BlogAdd}
+								></Route>
+								<Route path="/blog" component={Blog}></Route>
+								<Route path="/tag/:id?" component={Tag}></Route>
+								<Route
+									path="/category"
+									component={Category}
+								></Route>
+								<Route
+									path="/website"
+									component={Website}
+								></Route>
+							</Switch>
+						</div>
+					</Content>
+				</Layout>
+			</Layout>
+		</div>
+	);
+}

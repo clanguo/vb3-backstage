@@ -67,6 +67,7 @@ const CategoryTable: React.FC<ICategoryTable> = props => {
 			bordered={true}
 			dataSource={props.data}
 			pagination={false}
+			rowKey="id"
 		></Table>
 	);
 };

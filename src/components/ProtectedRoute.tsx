@@ -3,7 +3,6 @@ import { RouterState } from 'connected-react-router';
 import React, { ElementType } from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
-import Login from '../page/Login';
 import { IState } from '../redux/reducers';
 import { IAdminState } from '../redux/reducers/AdminReducers';
 
@@ -18,11 +17,20 @@ const ProtectedRoute: React.FC<
 			render={values => {
 				if (admin.isLoading) {
 					return (
-						<Spin
-							tip="加载中..."
-							size="large"
-							wrapperClassName="home-spin"
-						></Spin>
+						<div style={{
+							width: '100vw',
+							height: '100vh',
+							display: "flex",
+							justifyContent: "center",
+							alignItems: "center",
+							backgroundColor: "#f2f2f2"
+						}}>
+							<Spin
+								tip="加载中..."
+								size="large"
+								wrapperClassName="home-spin"
+							></Spin>
+						</div>
 					);
 				} else {
 					if (admin.account) {

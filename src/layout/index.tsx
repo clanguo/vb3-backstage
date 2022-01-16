@@ -7,9 +7,8 @@ import AdminActions, {
 	logoutAdminAction,
 	setLoadingAction,
 } from '../redux/actions/AdminActions';
-import { IAdminState } from '../redux/reducers/AdminReducers';
 import AdminServices from '../services/AdminServices';
-import Home from '../page/Home/Home';
+import Home from '../page/Home';
 import Login from '../page/Login';
 import './index.sass';
 
@@ -20,19 +19,20 @@ const _Layout: React.FC = props => {
 		(async () => {
 			dispatch(AdminActions.setLoadingAction(true));
 
-			const { data, headers } = await AdminServices.whoim();
-			let account = null;
-			if (!data.err) {
-				if (data.data?.account) {
-					let token = headers.authorization;
-					account = data.data.account;
-					dispatch(loginAdminAction({ token, account }));
-				} else {
-					dispatch(logoutAdminAction());
+			try {
+				const { data } = await AdminServices.whoim();
+				let account = null;
+				if (!data.err) {
+					if (data.data?.account) {
+						account = data.data.account;
+						dispatch(loginAdminAction({ account }));
+					} else {
+						dispatch(logoutAdminAction());
+					}
 				}
+			} finally {
+				dispatch(setLoadingAction(false));
 			}
-
-			dispatch(setLoadingAction(false));
 		})();
 	}, []);
 
