@@ -1,6 +1,6 @@
-import { Button, message, Spin } from 'antd';
+import { Button, Drawer, Form, message, Spin } from 'antd';
 import { goBack, push, RouterState } from 'connected-react-router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	Route,
@@ -18,7 +18,70 @@ import { IBlogState, ISearchCondition } from '../../redux/reducers/BlogReducer';
 import BlogServices, { IBlog } from '../../services/BlogServices';
 import './index.sass';
 
-const BlogList: React.FC = () => {
+interface IBlogFormDrawer extends Pick<IBlog, 'id'> {
+	onClose(): void;
+}
+
+const BlogFormDrawer: React.FC<IBlogFormDrawer> = props => {
+	const [currentBlog, setCurrentBlog] = useState<IBlog | null>(null);
+	const dispatch = useDispatch<TBlogActions & any>();
+
+	// const [visiable, setVisiable] = useState<boolean>(true);
+
+	useEffect(() => {
+		console.log('props.id', props.id);
+		BlogServices.getBlogById(props.id).then(res => {
+			if (res.err) {
+				message.error('操作失败');
+			} else {
+				setCurrentBlog(res.data!);
+			}
+		});
+	}, [props.id]);
+
+	const onSubmit = async (form: IBlog) => {
+		await BlogServices.editBlogInfo(props.id, form);
+		const { err, data } = await BlogServices.editBlogContent(
+			props.id,
+			form.content as any
+		);
+		if (err) {
+			message.error(err);
+		} else {
+			message.success('修改成功');
+			const { err, data: newBlog } = await BlogServices.getBlogById(
+				props.id
+			);
+			!err && dispatch(BlogActions.editBlog(props.id, newBlog!));
+		}
+	};
+
+	return (
+		<Drawer
+			title="修改博客"
+			width={720}
+			visible={true}
+			bodyStyle={{ paddingBottom: 80 }}
+			onClose={props.onClose}
+		>
+			{currentBlog ? (
+				<BlogForm
+					initialValue={currentBlog!}
+					disableReset={true}
+					onSubmit={onSubmit}
+				></BlogForm>
+			) : (
+				<div className="blog-form-spin">
+					<Spin></Spin>
+				</div>
+			)}
+		</Drawer>
+	);
+};
+
+interface IBlogList {}
+
+const BlogList: React.FC<IBlogList> = props => {
 	const blogs = useSelector<IState, IBlogState>(state => state.blog);
 
 	const dispatch = useDispatch<TBlogActions & any>();
@@ -27,32 +90,10 @@ const BlogList: React.FC = () => {
 		dispatch(BlogActions.fetchBlogs({ page }));
 	};
 
-	const onEdit = async (id: string) => {
-		dispatch(push('/blog/' + id));
-		// dispatch(BlogActions.setLoadingAction(true));
-		// const {data, err} = await BlogServices.getBlogById(id);
-		// if(!err) {
-		// 	setEditBlog(data);
-		// 	setToggleEdit(true);
-		// } else {
-		// 	message.error(err);
-		// }
+	const [editBlogId, setEditBlogId] = useState<string | null>(null);
 
-		// dispatch(BlogActions.setLoadingAction(false));
-		// const infoRes = await BlogServices.editBlogInfo(blog.id, blog);
-		// const contentRes = await BlogServices.editBlogContent(
-		// 	blog.id,
-		// 	blog.content
-		// );
-		// let err =
-		// 	(infoRes.err ? infoRes.err : '') +
-		// 	(contentRes.err ? contentRes.err : '');
-		// if (err) {
-		// 	message.error(err);
-		// } else {
-		// 	message.success('全部修改成功');
-		// }
-		// dispatch(BlogActions.fetchBlogs({}));
+	const onEdit = (id: string) => {
+		setEditBlogId(id);
 	};
 
 	const onDelete = async (id: string) => {
@@ -67,80 +108,31 @@ const BlogList: React.FC = () => {
 		dispatch(BlogActions.setLoadingAction(false));
 	};
 
-	return (
-		<BlogTable
-			data={blogs.blogs}
-			loading={blogs.isLoading}
-			condition={blogs.condition}
-			count={blogs.count}
-			onChange={onChange}
-			onDelete={onDelete}
-			onEdit={onEdit}
-		></BlogTable>
-	);
-};
-
-const BlogEdit: React.FC<RouteComponentProps<{ id: string }>> = ({ match }) => {
-	const dispatch = useDispatch<TBlogActions & any>();
-
-	const [editBlog, setEditBlog] = useState<IBlog | null>(null);
-
-	const router = useSelector<IState, RouterState>(state => state.router);
-
-	const exitEdit = () => {
-		dispatch(goBack());
-	};
-
-	useEffect(() => {
-		if (match.params.id) {
-			BlogServices.getBlogById(match.params.id).then(res => {
-				if (!res.err) {
-					setEditBlog(res.data);
-				} else {
-					message.error(res.err);
-				}
-			});
-		}
-	}, []);
-
-	const onSubmit = async (form: IBlog) => {
-		await BlogServices.editBlogInfo(match.params.id, form);
-		const { err, data } = await BlogServices.editBlogContent(match.params.id, form.content as any);
-		if (err) {
-			message.error(err);
-		} else {
-			message.success("修改成功");
-			const { err, data: newBlog } = await BlogServices.getBlogById(match.params.id);
-			!err && dispatch(BlogActions.editBlog(match.params.id, newBlog!));
-		}
-	}
+	console.log(editBlogId);
 
 	return (
-		<div className="blog-form">
-			<p>
-				<Button onClick={exitEdit} type="primary">
-					返回
-				</Button>
-			</p>
-			{editBlog ? (
-				<BlogForm
-					initialValue={editBlog!}
-					disableReset={true}
-					onSubmit={onSubmit}
-				></BlogForm>
-			) : (
-				<div className='blog-form-spin'>
-					<Spin></Spin>
-				</div>
-			)}
-		</div>
+		<>
+			<BlogTable
+				data={blogs.blogs}
+				loading={blogs.isLoading}
+				condition={blogs.condition}
+				count={blogs.count}
+				onChange={onChange}
+				onDelete={onDelete}
+				onEdit={onEdit}
+			></BlogTable>
+			{editBlogId ? (
+				<BlogFormDrawer
+					id={editBlogId}
+					onClose={() => setEditBlogId(null)}
+				></BlogFormDrawer>
+			) : null}
+		</>
 	);
 };
 
 const Blog: React.FC = () => {
 	const dispatch = useDispatch<TBlogActions & any>();
-
-	const [toggleEdit, setToggleEdit] = useState<boolean>(false);
 
 	useEffect(() => {
 		dispatch(BlogActions.fetchBlogs({ page: 1, key: '' }));
@@ -150,10 +142,7 @@ const Blog: React.FC = () => {
 	return (
 		<div className="blog-container">
 			<div className="blog-main">
-				<Switch>
-					<Route path="/blog/:id" component={BlogEdit}></Route>
-					<Route path="/blog" exact component={BlogList}></Route>
-				</Switch>
+				<BlogList></BlogList>
 			</div>
 		</div>
 	);

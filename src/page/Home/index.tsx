@@ -96,10 +96,7 @@ export default function Home() {
 					</div>
 				</Header>
 				<Layout>
-					<Sider
-						collapsible
-						className="home-sider"
-					>
+					<Sider collapsible className="home-sider">
 						<Menu
 							defaultSelectedKeys={[location.pathname]}
 							defaultOpenKeys={['blog', 'tag']}
@@ -127,12 +124,22 @@ export default function Home() {
 							<Menu.Item key="/category" icon={<BarsOutlined />}>
 								<NavLink to="/category">分类管理</NavLink>
 							</Menu.Item>
-							<Menu.Item
+							<SubMenu
 								key="/website"
 								icon={<SettingOutlined />}
+								title="网站管理"
 							>
-								<NavLink to="/website">网站管理</NavLink>
-							</Menu.Item>
+								<Menu.Item key="/websiteSetting">
+									<NavLink to="/websiteSetting">
+										网站设置
+									</NavLink>
+								</Menu.Item>
+								<Menu.Item key="/websiteSource">
+									<NavLink to="/websiteSource">
+										资源管理
+									</NavLink>
+								</Menu.Item>
+							</SubMenu>
 						</Menu>
 					</Sider>
 					<Content className="layout-content">
@@ -154,8 +161,14 @@ export default function Home() {
 									component={Category}
 								></Route>
 								<Route
-									path="/website"
+									path="/websiteSetting"
 									component={Website}
+								></Route>
+								<Route
+									path="/websiteSource"
+									/**
+									 * TODO
+									 */
 								></Route>
 							</Switch>
 						</div>
