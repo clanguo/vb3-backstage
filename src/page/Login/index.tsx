@@ -18,7 +18,7 @@ function mapDispatchToProps(dispatch: Dispatch<any>) {
 
 		backToUrlPage(url: string) {
 			dispatch(replace(url));
-		}
+		},
 	};
 }
 
@@ -26,7 +26,7 @@ function mapStateToProps(state: IState) {
 	return {
 		isLoading: state.admin.isLoading,
 		account: state.admin.account,
-		router: state.router
+		router: state.router,
 	};
 }
 
@@ -35,7 +35,7 @@ interface ILogin {
 	backToUrlPage(url: string): void;
 	isLoading: boolean;
 	account: string | null;
-	router: RouterState
+	router: RouterState;
 }
 
 const Login: React.FC<ILogin> = props => {
@@ -56,8 +56,8 @@ const Login: React.FC<ILogin> = props => {
 					},
 					{
 						pattern: /[a-zA-Z0-9@]{3,10}/,
-						message: "账号只能是数字、字母或者@"
-					}
+						message: '账号只能是数字、字母或者@',
+					},
 				]}
 			>
 				<Input
@@ -74,8 +74,8 @@ const Login: React.FC<ILogin> = props => {
 					},
 					{
 						pattern: /[a-zA-Z0-9@]{4,16}/,
-						message: "密码只能是4-16位的数字、字母或者@"
-					}
+						message: '密码只能是4-16位的数字、字母或者@',
+					},
 				]}
 			>
 				<Input
@@ -105,13 +105,16 @@ const Login: React.FC<ILogin> = props => {
 
 	useEffect(() => {
 		if (props.account) {
-			props.backToUrlPage(props.router.location.query.url || "/");
+			props.backToUrlPage(props.router.location.query.url || '/');
 		}
-	}, [props.account])
+	}, [props.account]);
 
 	return (
 		<div className="login-container">
-			<div className="wrapper">{formDom}</div>
+			<div className="wrapper">
+				<h1 className='login-title'>博客后台管理系统</h1>
+				{formDom}
+			</div>
 		</div>
 	);
 };
