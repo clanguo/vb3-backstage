@@ -134,11 +134,11 @@ export default function Home() {
 										网站设置
 									</NavLink>
 								</Menu.Item>
-								<Menu.Item key="/websiteSource">
+								{/* <Menu.Item key="/websiteSource">
 									<NavLink to="/websiteSource">
 										资源管理
 									</NavLink>
-								</Menu.Item>
+								</Menu.Item> */}
 							</SubMenu>
 						</Menu>
 					</Sider>
@@ -164,12 +164,9 @@ export default function Home() {
 									path="/websiteSetting"
 									component={Website}
 								></Route>
-								<Route
+								{/* <Route
 									path="/websiteSource"
-									/**
-									 * TODO
-									 */
-								></Route>
+								></Route> */}
 							</Switch>
 						</div>
 					</Content>

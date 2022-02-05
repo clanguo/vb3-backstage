@@ -8,8 +8,10 @@ import UploadImg from './UploadImg';
 import './BlogForm.sass';
 import { ICategory } from '../services/CategoryServices';
 
+export type TResetCallBack = (isReset: boolean) => void;
+
 interface IBlogForm {
-	onSubmit?(form: IBlog): void;
+	onSubmit?(form: IBlog, callback?: TResetCallBack): void;
 
 	initialValue?: Partial<IBlog>;
 
@@ -27,7 +29,9 @@ const BlogForm: React.FC<IBlogForm> = props => {
 	const onFinsh = (values: any) => {
 		const postForm = { ...values };
 		props.initialValue?.id && (postForm.id = props.initialValue.id);
-		props.onSubmit && props.onSubmit(postForm);
+		props.onSubmit && props.onSubmit(postForm, (isReset) => {
+			if (isReset) form.resetFields();
+		});
 	};
 
 	return (
