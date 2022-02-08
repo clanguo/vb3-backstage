@@ -11,42 +11,31 @@ import {
 import './index.sass';
 import {
 	AppstoreOutlined,
-	MenuUnfoldOutlined,
-	MenuFoldOutlined,
 	PieChartOutlined,
-	DesktopOutlined,
-	ContainerOutlined,
 	MailOutlined,
 	BarsOutlined,
 	SettingOutlined,
 } from '@ant-design/icons';
 import DashBoard from './Dashboard';
-import { ProjectServices } from '../../services/ProjectServices';
 import { useDispatch, useSelector } from 'react-redux';
 import ProjectActions from '../../redux/actions/ProjectActions';
 import Blog from '../Blog';
 import BlogAdd from '../Blog/BlogAdd';
-import * as pathToRegexp from 'path-to-regexp';
 import Tag from '../Tag';
 import { IState } from '../../redux/reducers';
 import { IAdminState } from '../../redux/reducers/AdminReducers';
 import AdminActions from '../../redux/actions/AdminActions';
 import CategoryActions from '../../redux/actions/CategoryActions';
-import { RouterState } from 'connected-react-router';
 import Category from '../Category';
 import Website from '../Website';
+import TagActions from '../../redux/actions/TagActions';
 
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Sider, Content } = Layout;
 
-export default function Home() {
+function useData() {
 	const location = useLocation();
 
 	const dispatch = useDispatch();
-
-	const admin = useSelector<IState, IAdminState>(state => state.admin);
-
-	// const router = useSelector<IState, RouterState>(state => state.router);
-
 	useEffect(() => {
 		dispatch(CategoryActions.fetchCategory());
 	}, []);
@@ -56,6 +45,23 @@ export default function Home() {
 			dispatch(ProjectActions.fetchTimeLine());
 		}
 	}, [location.pathname]);
+	
+	useEffect(() => {
+		dispatch(TagActions.fetchTag());
+	});
+}
+
+export default function Home() {
+	// 请求数据
+	useData();
+
+	const location = useLocation();
+
+	const dispatch = useDispatch();
+
+	const admin = useSelector<IState, IAdminState>(state => state.admin);
+
+	// const router = useSelector<IState, RouterState>(state => state.router);
 
 	const onAccountMenuClick = (event: any) => {
 		if (event.key === 'logout') {
