@@ -80,7 +80,7 @@ const Website: React.FC = () => {
 						onFinish={onFinish}
 					>
 						<Form.Item
-							label="前端项目地址"
+							label="首页Git Issues地址"
 							name="projectAddress"
 							rules={[
 								{ required: true, message: '项目地址不能为空' },
