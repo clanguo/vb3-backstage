@@ -16,6 +16,7 @@ import { fetchTag } from '../../redux/actions/TagActions';
 import { IState } from '../../redux/reducers';
 import { IBlogState, ISearchCondition } from '../../redux/reducers/BlogReducer';
 import BlogServices, { IBlog } from '../../services/BlogServices';
+import { useTitle } from '../../util';
 import './index.sass';
 
 interface IBlogFormDrawer extends Pick<IBlog, 'id'> {
@@ -133,6 +134,8 @@ const BlogList: React.FC<IBlogList> = props => {
 
 const Blog: React.FC = () => {
 	const dispatch = useDispatch<TBlogActions & any>();
+
+	useTitle("博客列表");
 
 	useEffect(() => {
 		dispatch(BlogActions.fetchBlogs({ page: 1, key: '' }));

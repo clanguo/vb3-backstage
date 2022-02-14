@@ -7,6 +7,7 @@ import CategoryActions, { addCategoryAction, deleteCategoryAction } from '../../
 import { IState } from '../../redux/reducers';
 import { IBlog } from '../../services/BlogServices';
 import CategoryServices, { ICategory } from '../../services/CategoryServices';
+import { useTitle } from '../../util';
 import './index.sass';
 
 interface ICategoryTable {
@@ -115,6 +116,8 @@ const CategoryForm: React.FC<ICategoryForm> = (props) => {
 };
 
 const Category: React.FC = () => {
+	useTitle("分类管理");
+
 	const category = useSelector<IState, ICategory[]>(
 		state => state.categories
 	);

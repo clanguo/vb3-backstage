@@ -7,6 +7,7 @@ import { IState } from '../../redux/reducers';
 import AdminActions from '../../redux/actions/AdminActions';
 import { replace, RouterState } from 'connected-react-router';
 import { IAdminState } from '../../redux/reducers/AdminReducers';
+import { useTitle } from '../../util';
 
 function mapDispatchToProps(dispatch: Dispatch<any>) {
 	return {
@@ -39,6 +40,8 @@ interface ILogin {
 }
 
 const Login: React.FC<ILogin> = props => {
+	useTitle("登录");
+
 	const formDom = (
 		<Form
 			name="normal_login"

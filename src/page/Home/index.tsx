@@ -29,6 +29,7 @@ import CategoryActions from '../../redux/actions/CategoryActions';
 import Category from '../Category';
 import Website from '../Website';
 import TagActions from '../../redux/actions/TagActions';
+import { useTitle } from '../../util';
 
 const { Header, Sider, Content } = Layout;
 
@@ -54,6 +55,8 @@ function useData() {
 export default function Home() {
 	// 请求数据
 	useData();
+
+	useTitle("首页");
 
 	const location = useLocation();
 

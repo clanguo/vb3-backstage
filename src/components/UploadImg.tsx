@@ -1,9 +1,8 @@
 import { message, Modal, Upload } from 'antd';
 import React, { useState, useCallback } from 'react';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import BlogServices from '../services/BlogServices';
 import { UploadRequestOption } from 'rc-upload/lib/interface';
-import { UploadFile } from 'antd/lib/upload/interface';
+import { ProjectServices } from '../services/ProjectServices';
 
 interface IUploadImg {
 	name?: string;
@@ -32,7 +31,7 @@ const UploadImg: React.FC<IUploadImg> = props => {
 		setLoading(true);
 		const form = new FormData();
 		form.append(props.name!, options.file);
-		const res = await BlogServices.uploadPoster(form);
+		const res = await ProjectServices.uploadPoster(form);
 		if (res.err) {
 			message.error('上传失败:' + res.err);
 		} else {

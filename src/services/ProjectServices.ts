@@ -43,4 +43,11 @@ export class ProjectServices {
   public static async setSetting(setting: ISetting): Promise<ResponseResult<ISetting>> {
     return request.post("/api/project/setting", setting);
   }
+  
+  /**
+   * 上传封面
+   */
+   public static async uploadPoster(form: FormData): Promise<ResponseResult<string>> {
+    return request.post("/api/uploads", form);
+  }
 }

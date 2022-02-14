@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Row, Select, Space } from 'antd';
+import { Button, Col, Form, Input, message, Row, Select, Space } from 'antd';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { IState } from '../redux/reducers';
@@ -7,8 +7,45 @@ import { ITag } from '../services/TagServices';
 import UploadImg from './UploadImg';
 import './BlogForm.sass';
 import { ICategory } from '../services/CategoryServices';
+import MarkdownIt from 'markdown-it';
+import MarkdownEditor from 'react-markdown-editor-lite';
+import 'react-markdown-editor-lite/lib/index.css';
+import { ProjectServices } from '../services/ProjectServices';
 
 export type TResetCallBack = (isReset: boolean) => void;
+
+// const MarkdownComponent = React.lazy(
+// 	() => import('react-markdown-editor-lite')
+// );
+
+const markdownParser = new MarkdownIt();
+
+const MarkdownComponent: React.FC<any> = (props: any) => {
+	const onChange = ({ text }: { text: string }) => {
+		props?.onChange(text);
+	};
+
+	const uploadImg = async (file: File) => {
+		const formData = new FormData();
+		formData.append("poster", file);
+		const result = await ProjectServices.uploadPoster(formData);
+		if (result.err) {
+			message.error("上传失败:" + result.err);
+			return "";
+		}
+		return result.data;
+	}
+
+	const { onChange: _, ...anotherProps } = props;
+	return (
+		<MarkdownEditor
+			renderHTML={(text: string) => markdownParser.render(text)}
+			onChange={onChange}
+			onImageUpload={uploadImg}
+			{...anotherProps}
+		/>
+	);
+};
 
 interface IBlogForm {
 	onSubmit?(form: IBlog, callback?: TResetCallBack): void;
@@ -29,9 +66,10 @@ const BlogForm: React.FC<IBlogForm> = props => {
 	const onFinsh = (values: any) => {
 		const postForm = { ...values };
 		props.initialValue?.id && (postForm.id = props.initialValue.id);
-		props.onSubmit && props.onSubmit(postForm, (isReset) => {
-			if (isReset) form.resetFields();
-		});
+		props.onSubmit &&
+			props.onSubmit(postForm, isReset => {
+				if (isReset) form.resetFields();
+			});
 	};
 
 	return (
@@ -139,7 +177,7 @@ const BlogForm: React.FC<IBlogForm> = props => {
 							offset: 2,
 						}}
 					>
-						<Input.TextArea className="blog-form-textarea"></Input.TextArea>
+						<MarkdownComponent style={{ height: '500px' }} />
 					</Form.Item>
 				</Col>
 			</Row>

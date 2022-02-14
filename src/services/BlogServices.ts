@@ -63,10 +63,4 @@ export default class BlogServices {
     return request.post("/api/blog", blog);
   }
 
-  /**
-   * 上传封面
-   */
-  public static async uploadPoster(form: FormData): Promise<ResponseResult<string>> {
-    return request.post("/api/uploads", form);
-  }
 }

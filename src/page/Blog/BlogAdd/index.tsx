@@ -7,8 +7,11 @@ import BlogActions from '../../../redux/actions/BlogActions';
 import CategoryActions from '../../../redux/actions/CategoryActions';
 import TagActions from '../../../redux/actions/TagActions';
 import BlogServices, { IBlog } from '../../../services/BlogServices';
+import { useTitle } from '../../../util';
 
 const BlogAdd: React.FC = () => {
+	useTitle("添加博客");
+	
 	const dispatch = useDispatch<any>();
 
 	useEffect(() => {

@@ -6,6 +6,7 @@ import TimeStatistic from '../../components/TimeStatistic';
 import ProjectActions from '../../redux/actions/ProjectActions';
 import { IState } from '../../redux/reducers';
 import { EventType, IEventLog } from '../../services/ProjectServices';
+import { useTitle } from '../../util';
 import './Dashboard.sass';
 
 const { Countdown } = Statistic;
@@ -14,6 +15,8 @@ const deadline = Date.now() + 1000 * 60 * 60 * 24 * 2 + 1000 * 30;
 const DashBoard: React.FC = () => {
 	// console.log("重新调用");
 	const dispatch = useDispatch();
+
+	useTitle("数据面板");
 
 	// useEffect(() => {
 	// 	dispatch(ProjectActions.fetchTimeLine());

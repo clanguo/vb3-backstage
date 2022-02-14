@@ -2,9 +2,12 @@ import { Button, Form, Input, message, Spin, Switch } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import React, { useEffect, useState } from 'react';
 import { ISetting, ProjectServices } from '../../services/ProjectServices';
+import { useTitle } from '../../util';
 import './index.sass';
 
 const Website: React.FC = () => {
+	useTitle("网站设置");
+
 	const [form] = useForm();
 
 	const [spining, setSpining] = useState<boolean>(true);
