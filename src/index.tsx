@@ -8,7 +8,7 @@ import './index.css';
 function renderLoading() {
 	const loadingDom = document.querySelector("#clock");
 	if (loadingDom)
-	loadingDom.classList.add("clockFadeOut");
+	loadingDom.classList.add("clock-fadeOut");
 	setTimeout(() => {
 	loadingDom?.remove();
 	}, 500);
