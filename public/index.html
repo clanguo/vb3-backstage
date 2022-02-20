@@ -5,16 +5,13 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
     <!-- <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" /> -->
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!-- mainfest主要用于移动端App -->
+    <!-- <link rel="manifest" href="%PUBLIC_URL%/manifest.json" /> -->
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -27,9 +24,62 @@
     <meta name="description" content="左耳东水良的个人博客后台管理系统">
     <meta name="keywords" content="左耳东水良,个人博客,博客,后台管理系统,博客后台">
     <title>左耳东水良的个人博客后台管理系统</title>
+    <style>
+      #clock {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #e7e7e7;
+        z-index: 9999;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      #clock .circle {
+        width: 30px;
+        height: 30px;
+        border: 4px solid transparent;
+        border-left-color: #0170ee;
+        border-right-color: #0170ee;
+        border-radius: 50%;
+        animation: showLoading linear infinite 1s;
+      }
+
+      @keyframes showLoading {
+        0% {
+          transform: rotateZ(0);
+        }
+
+        100% {
+          transform: rotateZ(180deg);
+        }
+      }
+
+      .clock-fadeOut {
+        animation: clockFadeOut ease-in-out .5s;
+      }
+
+      @keyframes clockFadeOut {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="clock">
+      <div class="circle"></div>
+    </div>
     <div id="root"></div>
     <!--
       This HTML file is a template.

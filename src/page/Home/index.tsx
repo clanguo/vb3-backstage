@@ -15,6 +15,7 @@ import {
 	MailOutlined,
 	BarsOutlined,
 	SettingOutlined,
+	MessageOutlined
 } from '@ant-design/icons';
 import DashBoard from './Dashboard';
 import { useDispatch, useSelector } from 'react-redux';
@@ -132,6 +133,9 @@ export default function Home() {
 							</Menu.Item>
 							<Menu.Item key="/category" icon={<BarsOutlined />}>
 								<NavLink to="/category">分类管理</NavLink>
+							</Menu.Item>
+							<Menu.Item key="/comment" icon={<MessageOutlined />}>
+								<NavLink to="/comment">评论管理</NavLink>
 							</Menu.Item>
 							<SubMenu
 								key="/website"

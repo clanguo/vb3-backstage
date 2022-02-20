@@ -1,46 +1,33 @@
 import { Button, Checkbox, Form, Input, Spin } from 'antd';
-import React, { Component, Dispatch, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import './index.sass';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { IState } from '../../redux/reducers';
 import AdminActions from '../../redux/actions/AdminActions';
 import { replace, RouterState } from 'connected-react-router';
-import { IAdminState } from '../../redux/reducers/AdminReducers';
 import { useTitle } from '../../util';
 
-function mapDispatchToProps(dispatch: Dispatch<any>) {
-	return {
-		onSubmit(form: any) {
-			// 把boolean类型的remeber参数变成0|1
-			form.remember = +form.remember;
-			dispatch(AdminActions.loginAdmin(form));
-		},
-
-		backToUrlPage(url: string) {
-			dispatch(replace(url));
-		},
-	};
-}
-
-function mapStateToProps(state: IState) {
-	return {
-		isLoading: state.admin.isLoading,
-		account: state.admin.account,
-		router: state.router,
-	};
-}
-
-interface ILogin {
-	onSubmit(form: any): void;
-	backToUrlPage(url: string): void;
-	isLoading: boolean;
-	account: string | null;
-	router: RouterState;
-}
-
-const Login: React.FC<ILogin> = props => {
+const Login: React.FC = props => {
 	useTitle("登录");
+
+	const dispatch = useDispatch();
+
+	const onSubmit = (form: any) => {
+		// 把boolean类型的remeber参数变成0|1
+		form.remember = +form.remember;
+		dispatch(AdminActions.loginAdmin(form));
+	}
+
+	const backToUrlPage = (url: string) => {
+		dispatch(replace(url));
+	}
+
+	const isLoading = useSelector<IState, boolean>(state => state.admin.isLoading);
+
+	const account = useSelector<IState, string | null>(state => state.admin.account);
+	
+	const router = useSelector<IState, RouterState>(state => state.router);
 
 	const formDom = (
 		<Form
@@ -48,7 +35,7 @@ const Login: React.FC<ILogin> = props => {
 			className="login-form"
 			initialValues={{ remember: true }}
 			size="large"
-			onFinish={props.onSubmit}
+			onFinish={onSubmit}
 		>
 			<Form.Item
 				name="account"
@@ -98,7 +85,7 @@ const Login: React.FC<ILogin> = props => {
 					type="primary"
 					htmlType="submit"
 					className="login-form-button"
-					loading={props.isLoading}
+					loading={isLoading}
 				>
 					登录
 				</Button>
@@ -107,10 +94,10 @@ const Login: React.FC<ILogin> = props => {
 	);
 
 	useEffect(() => {
-		if (props.account) {
-			props.backToUrlPage(props.router.location.query.url || '/');
+		if (account) {
+			backToUrlPage(router.location.query.url || '/');
 		}
-	}, [props.account]);
+	}, [account]);
 
 	return (
 		<div className="login-container">
@@ -122,4 +109,4 @@ const Login: React.FC<ILogin> = props => {
 	);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;
